@@ -8,7 +8,7 @@ class lossBase{
 public:
     lossBase(){};
     //methods
-    double virtual calculateLoss(float predict,float label){};
+    double virtual calculateLoss(float predict,float label){double ans = 0.0;return ans;};
 };
 
 class crossEntropyLoss:public lossBase{

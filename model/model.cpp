@@ -24,55 +24,51 @@ linearReg::linearReg(double lr,int param,int minibatch){
 linearReg::~linearReg(){}
 
 //calculate gradient to update models
-map<int,double> computeGrad(double learning_rate,int batchSize,int paramSize,map<int,double>&weights,vector<map<int,double> >data){
-    // linearReg lr(learning_rate,batchSize,paramSize);
-    // crossEntropyLoss cross;
-    // double overflow = 20.0;
-    // float total_cost = 0.0;
-    // float diff,predict;
+map<int,double> linearReg::computeGrad(double learning_rate,int batchSize,int paramSize,map<int,double>weights,vector<map<int,double> >data){
+    linearReg lr(learning_rate,batchSize,paramSize);
+    crossEntropyLoss cross;
+    double overflow = 20.0;
 
-    // //random device returns a figure between the min and the max
-    // random_device rd;
-    // //mt19937 is used to produce a random num
-    // mt19937 g(rd());
-
-    // vector<int> index(data.size());
-    // iota(index.begin(),index.end(),0);
-     map<int,double> gradients;
-    // double total_loss = 0.0;
-    // int total_right = 0;
-    // int total = data.size();
-    // shuffle(index.begin(),index.end(),g);
-    // for (unsigned int i = 0;i < batchSize;i++){
-    //     double loss = 0.0;
-    //     double label = data[index[i]][0];
-    //     double logit = 0.0;
-    //     for (auto it = data[index[i]].begin();it != data[index[i]].end();it++){
-    //         if (it -> first != 0){
-    //             //calculate the dot
-    //             logit += it->second * weights[it->first];
-    //         }
-    //     }
-    //     if (logit > overflow){
-    //         logit = overflow;
-    //     }
-    //     if (logit < -overflow){
-    //         logit = -overflow;
-    //     }
-    //     for (auto it = data[index[i]].begin();it != data[index[i]].end();it++){
-    //         if (it -> first != 0){
-    //             //calculate the dot
-    //             gradients[it -> first] +=(label - logit) * it->second;
-    //         }
-    //     }
-    //     logit =  1.0/(1.0 + exp(-logit));
-    //     loss = cross.calculateLoss(logit,label);
-    //     total_loss += loss;
-    // }
-    // total_loss /= batchSize;
-    // printf("Linear Regression loss:%f\n",total_loss);
+    //random device returns a figure between the min and the max
+    random_device rd;
+    //mt19937 is used to produce a random num
+    mt19937 g(rd());
+    vector<int> index(data.size());
+    iota(index.begin(),index.end(),0);
+    map<int,double> gradients;
+    double total_loss = 0.0;
+    shuffle(index.begin(),index.end(),g);
+    for (unsigned int i = 0;i < batchSize;i++){
+        double loss = 0.0;
+        double label = data[index[i]][0];
+        double logit = 0.0;
+        for (auto it = data[index[i]].begin();it != data[index[i]].end();it++){
+            if (it -> first != 0){
+                //calculate the dot
+                logit += it->second * weights[it->first];
+            }
+        }
+        if (logit > overflow){
+            logit = overflow;
+        }
+        if (logit < -overflow){
+            logit = -overflow;
+        }
+        for (auto it = data[index[i]].begin();it != data[index[i]].end();it++){
+            if (it -> first != 0){
+                //calculate the dot
+                gradients[it -> first] +=(label - logit) * it->second;
+            }
+        }
+        logit =  1.0/(1.0 + exp(-logit));
+        loss = cross.calculateLoss(logit,label);
+        total_loss += loss;
+    }
+    total_loss /= batchSize;
+    printf("Linear Regression loss:%f\n",total_loss);
     return gradients;
 }
+
 
 void linearReg::initParams(map<int,double>&weights){
     srand(time(NULL));
@@ -105,6 +101,9 @@ void linearReg::initParams(map<int,double>&weights){
 vector<map<int,double> >linearReg::getData(string addr){
     ifstream fin;
     fin.open(addr);
+    if (!fin){
+        cout<<"fail to open the file" <<endl;
+    }
     string line;
     vector<map<int,double> > data;
     while (getline(fin,line)){

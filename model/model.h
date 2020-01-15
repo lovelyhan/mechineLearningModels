@@ -19,10 +19,7 @@ public:
     int paramSize;
     int minibatchSize;
     //method
-    virtual map<int,double> computeGrad(map<int,double>&weights,vector<map<int,double> >data){
-        map<int,double> gradients;
-        return gradients;
-    }
+    virtual map<int,double> computeGrad(double learning_rate,int batchSize,int paramSize,map<int,double>weights,vector<map<int,double> >data)=0;
     void virtual initParams(map<int,double>&weights){};
 };
 
@@ -35,8 +32,8 @@ public:
     //int inputSize;
     double learning_rate;
     //methods
-    map<int,double> computeGrad(double learning_rate,int batchSize,int paramSize,map<int,double>weights,vector<map<int,double> >data);
-    void initParams(map<int,double>&weights);
+    map<int,double> computeGrad(double learning_rate,int batchSize,int paramSize,map<int,double>weights,vector<map<int,double> >data) override;
+    void initParams(map<int,double>&weights) override;
     map<int,double> getLabels(string addr);
     vector<map<int,double> > getData(string addr);
 };
